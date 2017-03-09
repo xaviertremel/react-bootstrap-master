@@ -24,17 +24,24 @@ function DisplayAuthorInfo(props) {
 }
 
 function DisplayComments(props) {
-  //if (props.length > 3) {
-  //  var numberofcomments = 3
-  //} else {
-  //  var numberofcomments = props.length 
-  //}
+  if (props.length > 3) {
+    var numberofcomments = 3
+  } else {
+    var numberofcomments = props.length 
+  }
+
+  var comments = []
+
+  for (var i = 0; i < numberofcomments; i++) {
+    comments.push(props[i]);
+  };
+
   return (
     <div>
     <hr/>
-    {props.length} comments
+    {comments.length} comments:
       <ul>
-        {props.map(comment =>
+        {comments.map(comment =>
           <li key={comment.id}><h3>{comment.title}</h3>{comment.body}</li>
         )}
       </ul>
