@@ -1,0 +1,15 @@
+### JetBrains template
+.idea/
+
+### Node template
+logs
+*.log
+npm-debug.log*
+
+# Compiled directories
+web/dist/
+
+# Dependency directories
+node_modules
+
+

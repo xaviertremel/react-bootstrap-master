@@ -7,6 +7,7 @@ import App from './containers/app';
 
 // Components
 import Home from './components/Home';
+import Authors from './components/Authors';
 
 export default (
 	<div>

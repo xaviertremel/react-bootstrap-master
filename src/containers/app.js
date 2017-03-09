@@ -6,7 +6,7 @@ class App extends Component {
     render() {
         return (
             <div>
-            <h1>This is A Bootstrap for react-redux</h1> <br/>
+            <h1>This is a very simple FetchApp with minimalistic design :)</h1><h3>(react-redux)</h3> <br/>
             <Link to="/">Home</Link>
             {this.props.children}
             </div>
