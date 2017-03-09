@@ -24,6 +24,11 @@ function DisplayAuthorInfo(props) {
 }
 
 function DisplayComments(props) {
+  //if (props.length > 3) {
+  //  var numberofcomments = 3
+  //} else {
+  //  var numberofcomments = props.length 
+  //}
   return (
     <div>
     <hr/>
@@ -188,24 +193,21 @@ class FetchAllPosts extends React.Component {
     axios.get('https://jsonplaceholder.typicode.com/posts/')
       .then(res => {
         const posts = res.data
-        this.setState({ posts, loading: false });
+        this.setState({ posts });
       });
   }
 
   render() {
     const numbers = this.state.posts.length
     const posts = this.state.posts
-    //const listPosts = posts.map((post) => <FetchPost key={post.id.toString()} post={posts}/>)
-    //posts.map((post) => <FetchPost key={post.id} post={posts}/>)
+    const listPosts = posts.map((post) => <FetchPost key={post.id.toString()} postId={post.id}/>)
 
     return (
       <div>
         {this.state.posts.length} Posts fetched:
-    <ul>
-      <FetchPost postId="1"/>
-      <FetchPost postId="2"/>
-      <FetchPost postId="3"/>
-    </ul>
+        <ul>
+          {listPosts}
+        </ul>
       </div>
     );
   }
