@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route } from 'react-router';
+import { Route, browserHistory } from 'react-router';
 import { dispatch } from 'redux';
 
 // Container
@@ -7,12 +7,13 @@ import App from './containers/app';
 
 // Components
 import Home from './components/Home';
-import Authors from './components/Authors';
+import UserPage from './components/UserPage';
 
 export default (
 	<div>
-		<Route component={App}>
+		<Route component={App} history={browserHistory}>
 			<Route component={Home} path="/" />
+			<Route component={UserPage} path="/user/:id" />
 		</Route>
 	</div>
 );

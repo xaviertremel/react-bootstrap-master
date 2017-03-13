@@ -1,24 +1,30 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
-import axios from 'axios'
+import axios from 'axios';
 import {Link} from 'react-router';
+import { Router, Route, browserHistory } from 'react-router';
 
-
-function DisplayAuthorInfo(props) {
+function DisplayUserInfo(props) {
   return (
-    <ul>
-      <li>ID: {props.id}</li>
-      <li>Name: {props.name}</li>
-      <li>Username: {props.username}</li>
-      <li>Email: {props.email}</li>
-      <li>Address:
+    <ul className="list-group">
+      <li className="list-group-item">ID: {props.id}</li>
+      <li className="list-group-item">Name: {props.name}</li>
+      <li className="list-group-item">Username: {props.username}</li>
+      <li className="list-group-item">Email: {props.email}</li>
+      <li className="list-group-item">Address:
         <p>{props.address.street}<br/>
         {props.address.suite}<br/>
         {props.address.city}<br/>
         {props.address.zipcode}</p></li>
-      <li>Coordinates:
+      <li className="list-group-item">Coordinates:
         <p>{props.address.geo.lat}<br/>
         {props.address.geo.lng}</p></li>
+      <li className="list-group-item">Phone: {props.phone}</li>
+      <li className="list-group-item">Website: {props.website}</li>
+      <li className="list-group-item">Company:
+        <p>{props.company.name}<br/>
+        {props.company.catchPhrase}<br/>
+        {props.company.bs}</p></li>
     </ul>
   );
 }
@@ -38,62 +44,14 @@ function DisplayComments(props) {
 
   return (
     <div>
-    <hr/>
     {comments.length} comments:
-      <ul>
+      <ul className="list-group">
         {comments.map(comment =>
-          <li key={comment.id}><h3>{comment.title}</h3>{comment.body}</li>
+          <li className="list-group-item" key={comment.id}><h3>{comment.title}</h3>{comment.body}</li>
         )}
       </ul>
     </div>
   );
-}
-
-
-class FetchAuthors extends React.Component {
-  constructor(props) {
-    super(props);
-    this.onClick = this.onClick.bind(this);
-
-    this.state = {
-      authors: [],
-      isClicked: false
-    };
-  }
-
-  componentDidMount() {
-  	var userId = this.props.userId
-    axios.get('https://jsonplaceholder.typicode.com/users')
-      .then(res => {
-        const authors = res.data[userId-1]
-        this.setState({ authors });
-      });
-  }
-
-  onClick() {
-  	const isClicked = this.state.isClicked;
-  	if (isClicked == true) {
-  		this.setState({isClicked : false })
-  	} else {
-  		this.setState({isClicked : true })
-  	}
-  }	
-
-
-  render() {
-    var userId = this.props.userId
-  	const isClicked = this.state.isClicked;
-    const authors = this.state.authors
-    const name = this.props.attribute
-    const authorname = this.state.authors.name
-
-    return (
-    	<div>
-    	By: <Link to="/" onClick={this.onClick}>{authorname}</Link>
-    	{isClicked ? DisplayAuthorInfo(authors) : '' }
-    	</div>
-    );
-  }
 }
 
 
@@ -104,9 +62,24 @@ class Post extends React.Component {
     this.onClick = this.onClick.bind(this);
 
     this.state = {
+      comments: [],
+      user: [],
       onMouseOver: false,
       isClicked: false,
     };
+  }
+
+  componentDidMount() {
+    axios.get('https://jsonplaceholder.typicode.com/comments?postId='+this.props.postId)
+      .then(res => {
+        const comments = res.data
+        this.setState({ comments });
+      });
+    axios.get('https://jsonplaceholder.typicode.com/users/'+this.props.userId)
+      .then(res => {
+        const user = res.data
+        this.setState({ user });
+      });
   }
 
   onClick() {
@@ -116,6 +89,7 @@ class Post extends React.Component {
     } else {
       this.setState({isClicked : true })
     }
+    event.preventDefault()
   } 
 
   onMouseOver() {
@@ -125,42 +99,38 @@ class Post extends React.Component {
   render() {
     const MouseOver = this.state.onMouseOver;
     const isClicked = this.state.isClicked;
-    const comments = this.props.comments;
+    const comments = this.state.comments;
     const post = this.props.post;
+    const user = this.state.user;
+    const username = this.state.user.name;
+    const linkStyle = {cursor:"pointer",textDecoration:"underline"};
 
     return (
-        <div>
-            <h3 onMouseOver={this.onMouseOver} onMouseLeave={this.onMouseLeave} onClick={this.onClick}>Title: <a href='#'>{post.title}</a></h3>
-            <FetchAuthors userId={post.userId} attribute="name" />
-            <p>Body: {post.body}</p>
-            {isClicked ? DisplayComments(comments) : ''}
+        <div className="panel panel-default">
+            <div className="panel-heading" onMouseOver={this.onMouseOver} onMouseLeave={this.onMouseLeave} onClick={this.onClick} style={linkStyle}>{post.title}</div>
+            <div className="panel-body">By: <Link to={'/user/'+user.id} key={user.id} activeClassName="active">{username} <span className="glyphicon glyphicon-eye-open" aria-hidden="true"></span></Link>
+            <p>{post.body}</p>
+            {isClicked ? DisplayComments(comments) : ''}</div>
         </div>
     );
   }
 }
 
-
-class FetchPost extends React.Component {
+class FetchPosts extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      post: [],
-      comments: [],
+      posts: [],
       loading: true,
     };
   }
 
   componentDidMount() {
-    axios.get('https://jsonplaceholder.typicode.com/posts/'+this.props.postId)
+    axios.get('https://jsonplaceholder.typicode.com/posts/')
       .then(res => {
-        const post = res.data
-        this.setState({ post, loading: false });
-      });
-    axios.get('https://jsonplaceholder.typicode.com/comments?postId='+this.props.postId)
-      .then(res => {
-        const comments = res.data
-        this.setState({ comments });
+        const posts = res.data
+        this.setState({ posts, loading: false });
       });
   }
 
@@ -169,52 +139,22 @@ class FetchPost extends React.Component {
   }
 
   renderPost() {
-  	return (
-  		<div>
-        <Post post={this.state.post} comments={this.state.comments} />
-  		</div>
-    );
-  }
-
-  render() {
-    return (
-      <div>
-        {this.state.loading ?
-          this.renderLoading()
-          : this.renderPost()}
-      </div>
-    );
-  }
-}
-
-class FetchAllPosts extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      posts: [],
-    };
-  }
-
-  componentDidMount() {
-    axios.get('https://jsonplaceholder.typicode.com/posts/')
-      .then(res => {
-        const posts = res.data
-        this.setState({ posts });
-      });
-  }
-
-  render() {
     const numbers = this.state.posts.length
     const posts = this.state.posts
-    const listPosts = posts.map((post) => <FetchPost key={post.id.toString()} postId={post.id}/>)
+    const listPosts = posts.map((post) => <Post key={post.id.toString()} postId={post.id} post={post} userId={post.userId} />)
 
     return (
       <div>
         {this.state.posts.length} Posts fetched:
-        <ul>
           {listPosts}
-        </ul>
+      </div>
+    );
+  }
+  
+  render() {
+    return (
+      <div>
+        {this.state.loading ? this.renderLoading() : this.renderPost()}
       </div>
     );
   }
@@ -225,7 +165,7 @@ class Home extends Component {
     render() {
         return (
             <div>
-              <FetchAllPosts />
+              <FetchPosts />
               Homepage!
             </div>
         );
