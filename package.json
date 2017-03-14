@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/giedriusvickus/react-bootstrap#readme",
   "dependencies": {
+    "axios": "^0.15.3",
     "es6-promise": "^3.2.1",
     "express": "^4.14.0",
     "history": "2.1.2",

@@ -2,41 +2,16 @@ import React, {Component} from 'react';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import {Link} from 'react-router';
-import { Router, Route, browserHistory } from 'react-router';
 
-function DisplayUserInfo(props) {
-  return (
-    <ul className="list-group">
-      <li className="list-group-item">ID: {props.id}</li>
-      <li className="list-group-item">Name: {props.name}</li>
-      <li className="list-group-item">Username: {props.username}</li>
-      <li className="list-group-item">Email: {props.email}</li>
-      <li className="list-group-item">Address:
-        <p>{props.address.street}<br/>
-        {props.address.suite}<br/>
-        {props.address.city}<br/>
-        {props.address.zipcode}</p></li>
-      <li className="list-group-item">Coordinates:
-        <p>{props.address.geo.lat}<br/>
-        {props.address.geo.lng}</p></li>
-      <li className="list-group-item">Phone: {props.phone}</li>
-      <li className="list-group-item">Website: {props.website}</li>
-      <li className="list-group-item">Company:
-        <p>{props.company.name}<br/>
-        {props.company.catchPhrase}<br/>
-        {props.company.bs}</p></li>
-    </ul>
-  );
-}
 
 function DisplayComments(props) {
   if (props.length > 3) {
-    var numberofcomments = 3
+    var numberofcomments = 3;
   } else {
-    var numberofcomments = props.length 
+    var numberofcomments = props.length;
   }
 
-  var comments = []
+  var comments = [];
 
   for (var i = 0; i < numberofcomments; i++) {
     comments.push(props[i]);
@@ -139,9 +114,9 @@ class FetchPosts extends React.Component {
   }
 
   renderPost() {
-    const numbers = this.state.posts.length
-    const posts = this.state.posts
-    const listPosts = posts.map((post) => <Post key={post.id.toString()} postId={post.id} post={post} userId={post.userId} />)
+    const numbers = this.state.posts.length;
+    const posts = this.state.posts;
+    const listPosts = posts.map((post) => <Post key={post.id.toString()} postId={post.id} post={post} userId={post.userId} />);
 
     return (
       <div>
@@ -161,15 +136,14 @@ class FetchPosts extends React.Component {
 }
 
 class Home extends Component {
-
-    render() {
-        return (
-            <div>
-              <FetchPosts />
-              Homepage!
-            </div>
-        );
-    }
+  render() {
+    return (
+      <div>
+        <FetchPosts />
+        Homepage!
+      </div>
+    );
+  }
 }
 
 export default connect((state) => {

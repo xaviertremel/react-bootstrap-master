@@ -1,29 +1,28 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
 import axios from 'axios';
-import { Router, Route, browserHistory } from 'react-router';
 
 function DisplayUserInfo(props) {
   return (
     <ul className="list-group">
-      <li className="list-group-item">ID: {props.user.id}</li>
-      <li className="list-group-item">Name: {props.user.name}</li>
-      <li className="list-group-item">Username: {props.user.username}</li>
-      <li className="list-group-item">Email: {props.user.email}</li>
+      <li className="list-group-item">ID: {props.id}</li>
+      <li className="list-group-item">Name: {props.name}</li>
+      <li className="list-group-item">Username: {props.username}</li>
+      <li className="list-group-item">Email: {props.email}</li>
       <li className="list-group-item">Address:
-        <p>{props.useraddress.street}<br/>
-        {props.useraddress.suite}<br/>
-        {props.useraddress.city}<br/>
-        {props.useraddress.zipcode}</p></li>
+        <p>{props.street}<br/>
+        {props.suite}<br/>
+        {props.city}<br/>
+        {props.zipcode}</p></li>
       <li className="list-group-item">Coordinates:
-        <p>{props.usergeo.lat}<br/>
-        {props.usergeo.lng}</p></li>
-      <li className="list-group-item">Phone: {props.user.phone}</li>
-      <li className="list-group-item">Website: {props.user.website}</li>
+        <p>{props.lat}<br/>
+        {props.lng}</p></li>
+      <li className="list-group-item">Phone: {props.phone}</li>
+      <li className="list-group-item">Website: {props.website}</li>
       <li className="list-group-item">Company:
-        <p>{props.usercompany.name}<br/>
-        {props.usercompany.catchPhrase}<br/>
-        {props.usercompany.bs}</p></li>
+        <p>{props.name}<br/>
+        {props.catchPhrase}<br/>
+        {props.bs}</p></li>
     </ul>
   );
 }
@@ -33,35 +32,94 @@ class FetchUser extends React.Component {
     super(props);
 
     this.state = {
-      user: [],
-      useraddress: [],
-      usergeo: [],
-      usercompany: [],
+      id: null,
+      name: '',
+      username: '',
+      email: '',
+      address: {
+        street: '',
+        suite: '',
+        city: '',
+        zipcode: '',
+        geo: {
+          lat: '',
+          lng: ''
+        }
+      },
+      phone: '',
+      website: '',
+      company: {
+        name: '',
+        catchPhrase: '',
+        bs: '',
+      },
+      loading: true
     };
   }
 
   componentDidMount() {
-    var userId = this.props.userId
-    axios.get('https://jsonplaceholder.typicode.com/users')
+    axios.get('https://jsonplaceholder.typicode.com/users/'+this.props.userId)
       .then(res => {
-        const user = res.data[userId-1]
-        const useraddress = res.data[userId-1].address
-        const usergeo = res.data[userId-1].address.geo
-        const usercompany = res.data[userId-1].company
-        this.setState({ user });
-        this.setState({ useraddress })
-        this.setState({ usergeo })
-        this.setState({ usercompany })
-        console.log(user);
+        const user = res.data
+        this.setState({
+          id: user.id,
+          name: user.name,
+          username: user.username,
+          email: user.email,
+          address: {
+            street: user.address.street,
+            suite: user.address.suite,
+            city: user.address.city,
+            zipcode: user.address.zipcode,
+            geo: {
+              lat: user.address.geo.lat,
+              lng: user.address.geo.lng
+            }
+          },
+          phone: user.phone,
+          website: user.website,
+          company: {
+            name: user.company.name,
+            catchPhrase: user.company.catchPhrase,
+            bs: user.company.bs
+          },
+          loading: false
+        });
       });
   }
 
-  render() {
-    console.log(this.state.useraddress.street);
+  renderLoading() {
+    return <div>Loading...</div>;
+  }
 
+  renderUser() {
     return (
       <div>
-      <DisplayUserInfo user={this.state.user} usercompany={this.state.usercompany} useraddress={this.state.useraddress} usergeo={this.state.usergeo} />
+        <DisplayUserInfo
+          id = {this.state.id}
+          name = {this.state.name}
+          username = {this.state.username}
+          email = {this.state.email}
+          street = {this.state.address.street}
+          suite = {this.state.address.suite}
+          city = {this.state.address.city}
+          zipcode = {this.state.address.zipcode}
+          lat = {this.state.address.geo.lat}
+          lng = {this.state.address.geo.lng}
+          phone = {this.state.phone}
+          website = {this.state.website}
+          name = {this.state.company.name}
+          catchPhrase = {this.state.company.catchPhrase}
+          bs = {this.state.company.bs}
+        />
+      </div>
+    );
+  }
+
+  render() {
+    return (
+      <div>
+        {this.state.loading ? this.renderLoading() : this.renderUser()}
       </div>
     );
   }
@@ -69,16 +127,15 @@ class FetchUser extends React.Component {
 
 
 class UserPage extends Component {
-
-    render() {
-        return (
-            <div>
-                <h1>User info</h1>
-                <FetchUser userId={this.props.params.id} />
-                AuthorPage!
-            </div>
-        );
-    }
+  render() {
+    return (
+      <div>
+        <h1>User info</h1>
+          <FetchUser userId={this.props.params.id} />
+          AuthorPage!
+      </div>
+    );
+  }
 }
 
 export default connect((state) => {
